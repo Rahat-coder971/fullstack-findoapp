@@ -1,10 +1,27 @@
 version: '3.8'
 
 services:
-  app:
-    build: .
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    ports:
+      - "5000:5000"
+    environment:
+      - NODE_ENV=production
+    container_name: findoapp-backend
+    volumes:
+      - ./backend:/app
+      - /app/node_modules
+
+  client:
+    build:
+      context: ./client
+      dockerfile: Dockerfile
     ports:
       - "3000:3000"
     environment:
-      - NODE_ENV=production
-    container_name: findoapp
+      - VITE_API_BASE_URL=http://backend:5000
+    container_name: findoapp-client
+    depends_on:
+      - backend
